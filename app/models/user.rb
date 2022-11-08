@@ -3,7 +3,7 @@ class User < ApplicationRecord
     validates :username, length: {minimum: 3}, allow_blank: false
     validates :name, presence: true, uniqueness: { case_sensitive: false }
     validates :identifier, presence: true
-    validates :password, presence: true
+    validates :passcode, presence: true
 
     scope :by_book_year, -> (year) {joins(:books).where(books: {Year: year})}
     scope :by_research_journal, -> (journal) {joins(:researches).where(researches: {Journal: journal})}
@@ -32,7 +32,7 @@ class User < ApplicationRecord
 
     private
     def security_number
-        self.password = "#{(0...4).map { ('a'..'z').to_a[rand(26)] }.join}#{SecureRandom.random_number(1_000_000)}"
+        self.passcode = "#{(0...4).map { ('a'..'z').to_a[rand(26)] }.join}#{SecureRandom.random_number(1_000_000)}"
     end
 
 
