@@ -1,9 +1,13 @@
 class User < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP } 
     validates :username, length: {minimum: 3}, allow_blank: false
     validates :name, presence: true, uniqueness: { case_sensitive: false }
     validates :identifier, presence: true
-    validates :passcode, presence: true
+    validates :passcode, presence: true, length: {minimum: 8}
 
     scope :by_book_year, -> (year) {joins(:books).where(books: {Year: year})}
     scope :by_research_journal, -> (journal) {joins(:researches).where(researches: {Journal: journal})}
@@ -28,7 +32,7 @@ class User < ApplicationRecord
         self.identifier = "ABC-#{Date.today.year}-#{SecureRandom.hex(7)}"
     end
 
-    before_validation :security_number, on: :create
+    after_validation :security_number, on: :create
 
     private
     def security_number
